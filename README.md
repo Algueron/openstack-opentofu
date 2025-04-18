@@ -67,9 +67,9 @@ openstack security group rule create --remote-ip "192.168.0.0/24" --protocol tcp
 
 - Create a keypair
 ````bash
-openstack keypair create --private-key terraform.key --type ssh terraform-key
+openstack keypair create --private-key opentofu.key --type ssh opentofu-key
 ````
 - Set the correct permissions on the private key
 ````bash
-chmod 400 terraform.key
+chmod 400 opentofu.key
 ````
