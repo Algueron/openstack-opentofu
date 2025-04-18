@@ -45,3 +45,31 @@ wget https://raw.githubusercontent.com/Algueron/openstack-opentofu/main/infra-us
 ````bash
 sed -i -e "s~INFRA_PASSWORD~$INFRA_PASSWORD~g" infra-user-openrc.sh
 ````
+
+- Log as Openstack infrastructure user
+````bash
+source infra-user-openrc.sh
+````
+
+### Security groups
+
+- Create a security group to allow SSH
+````bash
+openstack security group create --stateful allow-ssh
+````
+
+- Add the rule to allow SSH
+````bash
+openstack security group rule create --remote-ip "192.168.0.0/24" --protocol tcp --dst-port 22 --ingress allow-ssh
+````
+
+### SSH Keys
+
+- Create a keypair
+````bash
+openstack keypair create --private-key terraform.key --type ssh terraform-key
+````
+- Set the correct permissions on the private key
+````bash
+chmod 400 terraform.key
+````
