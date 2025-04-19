@@ -91,3 +91,32 @@ sudo apt install -y jq
 ````bash
 OPENTOFU_IP=$(openstack server show opentofu --column addresses --format json | jq --raw-output '.addresses."public-net"[0]')
 ````
+
+## OpenTofu Setup
+
+- Log into the OpenTofu VM using the floating ip and private key
+````bash
+ssh -i opentofu.key ubuntu@$OPENTOFU_IP
+````
+
+- Install gpg.
+````bash
+sudo apt install -y gpg
+````
+
+- Download the signing key to a new keyring.
+````bash
+wget -O- https://get.opentofu.org/opentofu.gpg | sudo tee /etc/apt/keyrings/opentofu.gpg >/dev/null
+wget -O- https://packages.opentofu.org/opentofu/tofu/gpgkey | gpg --dearmor | sudo tee /etc/apt/keyrings/opentofu-repo.gpg >/dev/null
+````
+
+- Add the official OpenTofu Linux repository.
+````bash
+echo "deb [signed-by=/etc/apt/keyrings/opentofu.gpg,/etc/apt/keyrings/opentofu-repo.gpg] https://packages.opentofu.org/opentofu/tofu/any/ any main
+deb-src [signed-by=/etc/apt/keyrings/opentofu.gpg,/etc/apt/keyrings/opentofu-repo.gpg] https://packages.opentofu.org/opentofu/tofu/any/ any main" | sudo tee /etc/apt/sources.list.d/opentofu.list >/dev/null
+````
+
+- Update and install Terraform.
+````bash
+sudo apt update && sudo apt install -y tofu
+````
