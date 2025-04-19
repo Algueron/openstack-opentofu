@@ -51,7 +51,7 @@ sed -i -e "s~INFRA_PASSWORD~$INFRA_PASSWORD~g" infra-user-openrc.sh
 source infra-user-openrc.sh
 ````
 
-### Security groups
+## Security groups
 
 - Create a security group to allow SSH
 ````bash
@@ -63,13 +63,31 @@ openstack security group create --stateful allow-ssh
 openstack security group rule create --remote-ip "192.168.0.0/24" --protocol tcp --dst-port 22 --ingress allow-ssh
 ````
 
-### SSH Keys
+## SSH Keys
 
 - Create a keypair
 ````bash
 openstack keypair create --private-key opentofu.key --type ssh opentofu-key
 ````
+
 - Set the correct permissions on the private key
 ````bash
 chmod 400 opentofu.key
+````
+
+## Virtual Machine
+
+- Create an Ubuntu virtual machine
+````bash
+openstack server create --flavor t2.small --image ubuntu-server-24.04 --network public-net --security-group default --security-group allow-ssh --key-name opentofu-key opentofu
+````
+
+- Install jq to be able to parse json
+````bash
+sudo apt install -y jq
+````
+
+- Retrieve the IP of the server
+````bash
+OPENTOFU_IP=$(openstack server show opentofu --column addresses --format json | jq --raw-output '.addresses."public-net"[0]')
 ````
